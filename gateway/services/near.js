@@ -6,6 +6,8 @@
 const { sign } = require("crypto");
 const nearAPI = require("near-api-js")
 const { connect } = nearAPI
+var nacl = require("tweetnacl")
+nacl.util = require('tweetnacl-util')
 
 async function init() {
     const { keyStores } = nearAPI
@@ -30,8 +32,17 @@ async function init() {
     console.log(accountDetails)
 }
 
-async function sign(message, secretKey) {
-    nacl.sign(message, secretKey)
-}
 
 init()
+
+const keyPair = nacl.sign.keyPair()
+console.log(keyPair.secretKey)
+const message = nacl.util.decodeUTF8('Hello!');
+var signature = nacl.sign(message, keyPair.secretKey)
+console.log(signature)
+
+console.log(nacl.util.encodeUTF8(nacl.sign.open(signature, keyPair.publicKey)))
+signature = nacl.sign.detached(message, keyPair.secretKey)
+
+const result = nacl.sign.detached.verify(message, signature, keyPair.publicKey)
+console.log(result)
