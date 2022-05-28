@@ -10,7 +10,7 @@ function Read() {
     const readData = async () => {
         try {
             console.log(await datasetsRef.get());
-            alert('Data was successfully fetched from cloud firestore! Close this alert and check console for output.')
+            // alert('Data was successfully fetched from cloud firestore! Close this alert and check console for output.')
         } catch (error) {
             console.log(error)
             alert(error)
