@@ -30,19 +30,23 @@ async function init() {
     const accountDetails = await account.getAccountDetails()
 
     console.log(accountDetails)
+    return account
 }
 
+async function main() {
+    const account = await init()
+    console.log(account)
 
-init()
+    const keyPair = nacl.sign.keyPair()
+    account.addKey(nacl.util.encodeUTF8(keyPair.publicKey), nacl.util.encodeUTF8(keyPair.secretKey))
 
-const keyPair = nacl.sign.keyPair()
-console.log(keyPair.secretKey)
-const message = nacl.util.decodeUTF8('Hello!');
-var signature = nacl.sign(message, keyPair.secretKey)
-console.log(signature)
+    console.log(keyPair.secretKey)
+    const message = nacl.util.decodeUTF8('Hello!');
 
-console.log(nacl.util.encodeUTF8(nacl.sign.open(signature, keyPair.publicKey)))
-signature = nacl.sign.detached(message, keyPair.secretKey)
+    const signature = nacl.sign.detached(message, keyPair.secretKey)
 
-const result = nacl.sign.detached.verify(message, signature, keyPair.publicKey)
-console.log(result)
+    const result = nacl.sign.detached.verify(message, signature, keyPair.publicKey)
+    console.log(result)
+}
+
+main()
