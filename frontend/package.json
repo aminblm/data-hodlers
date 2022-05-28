@@ -6,13 +6,18 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "export": "next export"
   },
   "dependencies": {
+    "firebase": "^9.8.2",
+    "firebase-admin": "^10.2.0",
     "near-api-js": "^0.44.2",
     "next": "12.1.6",
     "react": "18.1.0",
-    "react-dom": "18.1.0"
+    "react-dom": "18.1.0",
+    "react-firebase-hooks": "^5.0.3",
+    "react-hot-toast": "^2.2.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.7",
