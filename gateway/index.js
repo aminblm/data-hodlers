@@ -16,6 +16,15 @@ app.get('/data', function(req, res, next) {
       next(err);
     }
   });
+
+app.get('/data/:id', function(req, res, next) {
+    try {
+        res.json(dataService.getById(req.params.id));
+    } catch(err) {
+        console.error(`Error while getting data `, err.message);
+        next(err);
+    }
+});
   
 
 let server = app.listen(3000, function () {
