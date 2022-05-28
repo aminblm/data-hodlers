@@ -49,23 +49,23 @@ async function createKeyPair() {
     return newKeyPair
 }
 
-// decode base 58 string
-function decodeBase58(str) {
-    return new Buffer(str, 'base58').toString('ascii')
-}
-
-
 async function main() {
-
     const account = await init()
     console.log(account)
 
     const localKeyPair = JSON.parse(fs.readFileSync(getCredentialsPath() + credentialsFileSubPath, 'utf8'))
 
     // const keyPair = nacl.sign.keyPair()
+    const encodedMessage = '8Rx4cKNYfDKVM2kWmj6WimGaoyWne3xkU5g6ULvJrK7h'
+    const message = nacl.util.decodeUTF8(encodedMessage)
+
+    const payload = {
+        message: encodedMessage,
+        public_key: localKeyPair.public_key,
+        signature: localKeyPair.signature
+    }
 
     // console.log(keyPair.secretKey)
-    const message = nacl.util.decodeUTF8('Hello!')
     console.log(message, localKeyPair.private_key)
     const signature = nacl.sign.detached(message, bs58.decode(localKeyPair.private_key.replace('ed25519:', '')))
 
@@ -73,5 +73,47 @@ async function main() {
     console.log(result)
 }
 
-main()
+// main()
 
+async function signString(encodedMessage) {
+    const account = await init()
+    const localKeyPair = JSON.parse(fs.readFileSync(getCredentialsPath() + credentialsFileSubPath, 'utf8'))
+    const message = nacl.util.decodeUTF8(encodedMessage)
+    const signature = nacl.sign.detached(message, bs58.decode(localKeyPair.private_key.replace('ed25519:', '')))
+    const payload = {
+        message: encodedMessage,
+        publicKey: localKeyPair.public_key,
+        signature: bs58.encode(signature)
+    }
+    console.log(payload)
+    return payload
+}
+
+async function verifySignature(payload) {
+    console.log(payload)
+    const localKeyPair = JSON.parse(fs.readFileSync(getCredentialsPath() + credentialsFileSubPath, 'utf8'))
+    console.log(nacl.util.decodeUTF8(payload.message), bs58.decode(payload.signature), bs58.decode(payload.publicKey.replace('ed25519:', '')))
+    const result = nacl.sign.detached.verify(nacl.util.decodeUTF8(payload.message), bs58.decode(payload.signature), bs58.decode(payload.publicKey.replace('ed25519:', '')))
+    console.log(result)
+
+    if (result) {
+        return nacl.util.encodeUTF8(payload.message)
+    } else {
+        throw new Error('Invalid signature')
+    }
+}
+
+async function test() {
+    const message = "8Rx4cKNYfDKVM2kWmj6WimGaoyWne3xkU5g6ULvJrK7h"
+    const localKeyPair = JSON.parse(fs.readFileSync(getCredentialsPath() + credentialsFileSubPath, 'utf8'))
+    const payload = await signString(message)
+
+    console.log(await verifySignature(payload))
+}
+
+module.exports = {
+    signString,
+    verifySignature
+}
+
+// test()
