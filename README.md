@@ -14,8 +14,16 @@ cd gateway
 npm i
 ```
 
-## Run the project
+## Run the frontend
 
 ```
+cd frontend
+npm run dev
+```
+
+## Run the gateway
+
+```
+cd gateway
 npm run dev
 ```
