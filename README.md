@@ -13,3 +13,9 @@ npm i
 cd gateway
 npm i
 ```
+
+## Run the project
+
+```
+npm run dev
+```
